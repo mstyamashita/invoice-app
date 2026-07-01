@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>請求書作成アプリ</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif;
+      background: #f5f5f0;
+      color: #2c2c2a;
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    .app {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem 4rem;
+    }
+
+    .page-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 2rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid #e0dfd8;
+    }
+
+    .page-header h1 {
+      font-size: 22px;
+      font-weight: 600;
+      color: #2c2c2a;
+    }
+
+    .inv-badge {
+      background: #E6F1FB;
+      color: #185FA5;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 5px 14px;
+      border-radius: 20px;
+      border: 1px solid #B5D4F4;
+    }
+
+    .card {
+      background: #ffffff;
+      border: 1px solid #e0dfd8;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .section-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: #888780;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 14px;
+    }
+
+    .inv-num-display {
+      background: #f5f5f0;
+      border: 1px solid #e0dfd8;
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 16px;
+      font-weight: 700;
+      color: #185FA5;
+      letter-spacing: 0.05em;
+    }
+
+    .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+
+    .field { display: flex; flex-direction: column; gap: 5px; }
+    .field label { font-size: 13px; color: #5F5E5A; font-weight: 500; }
+
+    .field input,
+    .field select,
+    .field textarea {
+      border: 1px solid #d3d1c7;
+      border-radius: 8px;
+      padding: 9px 12px;
+      font-size: 14px;
+      color: #2c2c2a;
+      font-family: inherit;
+      background: #fff;
+      width: 100%;
+      transition: border-color 0.15s;
+    }
+
+    .field input:focus,
+    .field select:focus,
+    .field textarea:focus {
+      outline: none;
+      border-color: #378ADD;
+      box-shadow: 0 0 0 3px rgba(55,138,221,0.12);
+    }
+
+    .field textarea { resize: vertical; min-height: 70px; }
+
+    /* Items table */
+    .items-table { width: 100%; border-collapse: collapse; }
+
+    .items-table th {
+      font-size: 12px;
+      font-weight: 600;
+      color: #888780;
+      padding: 6px 8px;
+      text-align: left;
+      border-bottom: 1px solid #e0dfd8;
+    }
+
+    .items-table td { padding: 6px 4px; vertical-align: middle; }
+
+    .items-table input,
+    .items-table select {
+      border: 1px solid #d3d1c7;
+      border-radius: 6px;
+      padding: 7px 8px;
+      font-size: 13px;
+      color: #2c2c2a;
+      background: #fff;
+      width: 100%;
+      font-family: inherit;
+    }
+
+    .items-table input:focus,
+    .items-table select:focus {
+      outline: none;
+      border-color: #378ADD;
+    }
+
+    .item-amount {
+      text-align: right;
+      font-size: 13px;
+      font-weight: 600;
+      color: #2c2c2a;
+      padding-right: 8px;
+      white-space: nowrap;
+    }
+
+    .del-btn {
+      background: none;
+      border: none;
+      color: #888780;
+      cursor: pointer;
+      font-size: 18px;
+      padding: 4px 6px;
+      border-radius: 6px;
+      line-height: 1;
+      transition: background 0.15s, color 0.15s;
+    }
+    .del-btn:hover { background: #FCEBEB; color: #A32D2D; }
+
+    .add-btn {
+      background: none;
+      border: 1px dashed #d3d1c7;
+      border-radius: 8px;
+      padding: 9px 16px;
+      font-size: 13px;
+      color: #888780;
+      cursor: pointer;
+      width: 100%;
+      margin-top: 12px;
+      font-family: inherit;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .add-btn:hover { background: #f5f5f0; border-color: #888780; color: #444441; }
+
+    /* Tax row */
+    .tax-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 14px;
+    }
+    .tax-row label { font-size: 13px; color: #5F5E5A; white-space: nowrap; font-weight: 500; }
+    .tax-row select {
+      border: 1px solid #d3d1c7;
+      border-radius: 8px;
+      padding: 6px 10px;
+      font-size: 13px;
+      background: #fff;
+      color: #2c2c2a;
+      font-family: inherit;
+    }
+
+    /* Totals */
+    .totals-box {
+      max-width: 280px;
+      margin-left: auto;
+      margin-top: 14px;
+    }
+    .total-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 5px 0;
+      font-size: 14px;
+      color: #5F5E5A;
+      border-bottom: 1px solid #f0efe8;
+    }
+    .total-row.grand {
+      font-size: 18px;
+      font-weight: 700;
+      color: #2c2c2a;
+      border-bottom: none;
+      border-top: 2px solid #e0dfd8;
+      padding-top: 10px;
+      margin-top: 6px;
+    }
+
+    /* Actions */
+    .actions {
+      display: flex;
+      gap: 12px;
+      justify-content: flex-end;
+      margin-top: 1.75rem;
+    }
+
+    .btn-secondary {
+      background: #fff;
+      border: 1px solid #d3d1c7;
+      border-radius: 8px;
+      padding: 11px 22px;
+      font-size: 14px;
+      color: #444441;
+      cursor: pointer;
+      font-family: inherit;
+      font-weight: 500;
+      transition: background 0.15s;
+    }
+    .btn-secondary:hover { background: #f5f5f0; }
+
+    .btn-primary {
+      background: #2c2c2a;
+      border: none;
+      border-radius: 8px;
+      padding: 11px 22px;
+      font-size: 14px;
+      color: #fff;
+      cursor: pointer;
+      font-family: inherit;
+      font-weight: 500;
+      transition: opacity 0.15s;
+    }
+    .btn-primary:hover { opacity: 0.82; }
+
+    /* Success message */
+    .success-msg {
+      background: #EAF3DE;
+      color: #3B6D11;
+      border: 1px solid #C0DD97;
+      border-radius: 8px;
+      padding: 12px 16px;
+      font-size: 14px;
+      display: none;
+      margin-top: 14px;
+    }
+
+    /* ===== PREVIEW OVERLAY ===== */
+    .overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .overlay.open { display: flex; }
+
+    .preview-box {
+      background: #fff;
+      border-radius: 16px;
+      padding: 2rem 2.5rem;
+      width: 100%;
+      max-width: 680px;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .preview-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 1.5rem;
+    }
+
+    .preview-top h2 {
+      font-size: 26px;
+      font-weight: 700;
+      color: #2c2c2a;
+    }
+
+    .preview-inv-num {
+      font-size: 13px;
+      color: #888780;
+      margin-top: 4px;
+    }
+
+    .close-btn {
+      background: none;
+      border: none;
+      font-size: 22px;
+      cursor: pointer;
+      color: #888780;
+      line-height: 1;
+      padding: 4px;
+    }
+    .close-btn:hover { color: #2c2c2a; }
+
+    .preview-meta {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid #e0dfd8;
+    }
+
+    .meta-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: #888780;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 5px;
+    }
+
+    .meta-value { font-size: 15px; font-weight: 600; color: #2c2c2a; }
+    .meta-sub { font-size: 13px; color: #5F5E5A; margin-top: 2px; }
+
+    .preview-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      margin-bottom: 1rem;
+    }
+    .preview-table th {
+      font-size: 11px;
+      font-weight: 600;
+      color: #888780;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      padding: 8px 10px;
+      border-bottom: 2px solid #e0dfd8;
+      text-align: left;
+    }
+    .preview-table th:last-child { text-align: right; }
+    .preview-table td {
+      padding: 9px 10px;
+      border-bottom: 1px solid #f0efe8;
+      color: #2c2c2a;
+    }
+    .preview-table td:last-child { text-align: right; font-weight: 600; }
+
+    .preview-totals {
+      max-width: 260px;
+      margin-left: auto;
+      font-size: 14px;
+    }
+    .pt-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 5px 0;
+      color: #5F5E5A;
+    }
+    .pt-row.grand {
+      font-size: 18px;
+      font-weight: 700;
+      color: #2c2c2a;
+      border-top: 2px solid #e0dfd8;
+      padding-top: 10px;
+      margin-top: 6px;
+    }
+
+    .preview-notes {
+      margin-top: 1.5rem;
+      padding-top: 1rem;
+      border-top: 1px solid #e0dfd8;
+      font-size: 13px;
+      color: #5F5E5A;
+    }
+
+    .preview-actions {
+      display: flex;
+      gap: 12px;
+      justify-content: flex-end;
+      margin-top: 1.75rem;
+    }
+
+    /* ===== PRINT STYLES ===== */
+    @media print {
+      body { background: #fff; }
+      .app { padding: 0; max-width: 100%; }
+      .no-print { display: none !important; }
+      .card { border: none; padding: 0; margin: 0; }
+      .page-header { border-bottom: 2px solid #333; padding-bottom: 0.75rem; }
+      .preview-box { box-shadow: none; border-radius: 0; padding: 0; max-height: none; }
+      .overlay { position: static; background: none; padding: 0; display: block; }
+      .preview-actions { display: none; }
+    }
+
+    @media (max-width: 600px) {
+      .grid2, .grid3 { grid-template-columns: 1fr; }
+      .preview-meta { grid-template-columns: 1fr; }
+      .actions { flex-direction: column; }
+      .btn-primary, .btn-secondary { width: 100%; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="app">
+  <div class="page-header no-print">
+    <h1>請求書作成アプリ</h1>
+    <span class="inv-badge" id="inv-badge">番号生成中...</span>
+  </div>
+
+  <!-- 請求書番号 -->
+  <div class="card no-print">
+    <div class="section-title">請求書番号（自動採番）</div>
+    <div class="inv-num-display" id="inv-num-display">--</div>
+  </div>
+
+  <!-- 提出者情報 -->
+  <div class="card no-print">
+    <div class="section-title">提出者情報</div>
+    <div class="grid2">
+      <div class="field">
+        <label>氏名 / 会社名 <span style="color:#E24B4A">*</span></label>
+        <input type="text" id="submitter-name" placeholder="山田 太郎">
+      </div>
+      <div class="field">
+        <label>メールアドレス</label>
+        <input type="email" id="submitter-email" placeholder="taro@example.com">
+      </div>
+    </div>
+    <div class="grid2" style="margin-top:12px">
+      <div class="field">
+        <label>住所</label>
+        <input type="text" id="submitter-address" placeholder="東京都〇〇区...">
+      </div>
+      <div class="field">
+        <label>電話番号</label>
+        <input type="tel" id="submitter-tel" placeholder="090-0000-0000">
+      </div>
+    </div>
+  </div>
+
+  <!-- 請求先・日付 -->
+  <div class="card no-print">
+    <div class="section-title">請求先・請求日</div>
+    <div class="grid3">
+      <div class="field">
+        <label>請求先</label>
+        <input type="text" id="recipient" placeholder="株式会社〇〇 経理部">
+      </div>
+      <div class="field">
+        <label>請求日</label>
+        <input type="date" id="invoice-date">
+      </div>
+      <div class="field">
+        <label>支払期限</label>
+        <input type="date" id="due-date">
+      </div>
+    </div>
+  </div>
+
+  <!-- 明細 -->
+  <div class="card no-print">
+    <div class="section-title">明細</div>
+    <table class="items-table">
+      <thead>
+        <tr>
+          <th style="width:26%">カテゴリ</th>
+          <th style="width:28%">品目名</th>
+          <th style="width:10%">数量</th>
+          <th style="width:16%">単価（円）</th>
+          <th style="width:14%">金額</th>
+          <th style="width:6%"></th>
+        </tr>
+      </thead>
+      <tbody id="items-body"></tbody>
+    </table>
+    <button class="add-btn" id="add-item-btn">＋ 明細を追加する</button>
+
+    <div class="tax-row">
+      <label>消費税率：</label>
+      <select id="tax-rate">
+        <option value="10">10%（標準）</option>
+        <option value="8">8%（軽減税率）</option>
+        <option value="0">非課税（0%）</option>
+      </select>
+    </div>
+
+    <div class="totals-box">
+      <div class="total-row"><span>小計</span><span id="subtotal">¥0</span></div>
+      <div class="total-row"><span>消費税</span><span id="tax-amount">¥0</span></div>
+      <div class="total-row grand"><span>合計金額</span><span id="grand-total">¥0</span></div>
+    </div>
+  </div>
+
+  <!-- 備考 -->
+  <div class="card no-print">
+    <div class="section-title">備考・振込先</div>
+    <div class="field">
+      <textarea id="notes" placeholder="振込先口座情報、注意事項など自由にご記入ください。&#10;例）〇〇銀行 〇〇支店 普通 1234567 ヤマダタロウ"></textarea>
+    </div>
+  </div>
+
+  <div id="success-msg" class="success-msg no-print"></div>
+
+  <div class="actions no-print">
+    <button class="btn-secondary" id="preview-btn">プレビューを確認する</button>
+    <button class="btn-primary" id="submit-btn">請求書を完成させる</button>
+  </div>
+</div><!-- /.app -->
+
+
+<!-- ===== プレビュー オーバーレイ ===== -->
+<div class="overlay" id="preview-modal">
+  <div class="preview-box">
+    <div class="preview-top">
+      <div>
+        <h2>請求書</h2>
+        <div class="preview-inv-num" id="p-inv-num"></div>
+      </div>
+      <button class="close-btn" id="close-preview">✕</button>
+    </div>
+
+    <div class="preview-meta">
+      <div>
+        <div class="meta-label">提出者</div>
+        <div class="meta-value" id="p-from">—</div>
+        <div class="meta-sub" id="p-from-detail"></div>
+      </div>
+      <div>
+        <div class="meta-label">請求先</div>
+        <div class="meta-value" id="p-to">—</div>
+        <div class="meta-sub">
+          請求日：<span id="p-date"></span><br>
+          支払期限：<span id="p-due"></span>
+        </div>
+      </div>
+    </div>
+
+    <table class="preview-table">
+      <thead>
+        <tr>
+          <th>品目名</th>
+          <th style="text-align:right">数量</th>
+          <th style="text-align:right">単価</th>
+          <th style="text-align:right">金額</th>
+        </tr>
+      </thead>
+      <tbody id="p-items"></tbody>
+    </table>
+
+    <div class="preview-totals">
+      <div class="pt-row"><span>小計</span><span id="p-subtotal"></span></div>
+      <div class="pt-row"><span>消費税</span><span id="p-tax"></span></div>
+      <div class="pt-row grand"><span>合計</span><span id="p-grand"></span></div>
+    </div>
+
+    <div class="preview-notes" id="p-notes" style="display:none"></div>
+
+    <div class="preview-actions">
+      <button class="btn-secondary" id="close-preview2">閉じる</button>
+      <button class="btn-primary" id="print-btn">印刷 / PDF保存</button>
+    </div>
+  </div>
+</div>
+
+
+<script>
+  // ===== カテゴリ定義 =====
+  const CATEGORIES = [
+    { label: "物品・材料費", items: ["消耗品","原材料","部品・部材","仕入商品","資材","梱包資材","その他物品"] },
+    { label: "備品・設備",   items: ["事務用品","IT機器・周辺機器","工具・器具","家具・設備","その他備品"] },
+    { label: "外注・委託費", items: ["制作費","デザイン費","翻訳・校正費","調査費","コンサルティング費","その他委託費"] },
+    { label: "その他",       items: ["送料","手数料","立替費用","その他"] }
+  ];
+
+  // ===== 請求書番号の自動採番 =====
+  function genInvoiceNumber() {
+    const now = new Date();
+    const y = now.getFullYear();
+    const m = String(now.getMonth() + 1).padStart(2, '0');
+    const d = String(now.getDate()).padStart(2, '0');
+    const dateStr = `${y}${m}${d}`;
+    const key = `inv_seq_${dateStr}`;
+    let seq = 0;
+    try { seq = parseInt(localStorage.getItem(key) || '0'); } catch(e){}
+    seq += 1;
+    try { localStorage.setItem(key, seq); } catch(e){}
+    return `${dateStr}-${String(seq).padStart(2, '0')}`;
+  }
+
+  const INV_NUM = genInvoiceNumber();
+  document.getElementById('inv-num-display').textContent = INV_NUM;
+  document.getElementById('inv-badge').textContent = INV_NUM;
+
+  // ===== 今日・支払期限の初期値 =====
+  const today = new Date();
+  const fmt = d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  document.getElementById('invoice-date').value = fmt(today);
+  const due = new Date(today); due.setDate(due.getDate() + 30);
+  document.getElementById('due-date').value = fmt(due);
+
+  // ===== 明細管理 =====
+  let items = [];
+  let nextId = 1;
+
+  function buildCategorySelect(selectedVal) {
+    let html = `<option value="">カテゴリ選択</option>`;
+    CATEGORIES.forEach(g => {
+      html += `<optgroup label="${g.label}">`;
+      g.items.forEach(item => {
+        html += `<option value="${item}"${selectedVal === item ? ' selected' : ''}>${item}</option>`;
+      });
+      html += `</optgroup>`;
+    });
+    return html;
+  }
+
+  function addItem() {
+    items.push({ id: nextId++, category: '', name: '', qty: 1, price: 0 });
+    renderItems();
+  }
+
+  function removeItem(id) {
+    items = items.filter(i => i.id !== id);
+    renderItems();
+  }
+
+  function updateItem(id, field, value) {
+    const item = items.find(i => i.id === id);
+    if (!item) return;
+    if (field === 'qty' || field === 'price') {
+      item[field] = parseFloat(value) || 0;
+    } else {
+      item[field] = value;
+    }
+    if (field === 'category' && value) {
+      item.name = value;
+      const row = document.querySelector(`tr[data-id="${id}"] .item-name`);
+      if (row) row.value = value;
+    }
+    calcTotals();
+  }
+
+  function renderItems() {
+    const tbody = document.getElementById('items-body');
+    if (items.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:18px;color:#888780;font-size:13px;">明細を追加してください</td></tr>`;
+      calcTotals();
+      return;
+    }
+    tbody.innerHTML = items.map(item => `
+      <tr data-id="${item.id}">
+        <td>
+          <select onchange="updateItem(${item.id},'category',this.value)">
+            ${buildCategorySelect(item.category)}
+          </select>
+        </td>
+        <td>
+          <input class="item-name" type="text" value="${escapeHtml(item.name)}" placeholder="品目名を入力"
+            oninput="updateItem(${item.id},'name',this.value)">
+        </td>
+        <td>
+          <input type="number" min="0" step="1" value="${item.qty}"
+            oninput="updateItem(${item.id},'qty',this.value)" style="text-align:right">
+        </td>
+        <td>
+          <input type="number" min="0" step="1" value="${item.price || ''}" placeholder="0"
+            oninput="updateItem(${item.id},'price',this.value)" style="text-align:right">
+        </td>
+        <td class="item-amount">¥${Math.round(item.qty * item.price).toLocaleString()}</td>
+        <td><button class="del-btn" onclick="removeItem(${item.id})">×</button></td>
+      </tr>
+    `).join('');
+    calcTotals();
+  }
+
+  function calcTotals() {
+    const subtotal = items.reduce((s, i) => s + Math.round(i.qty * i.price), 0);
+    const rate = parseInt(document.getElementById('tax-rate').value) / 100;
+    const tax = Math.round(subtotal * rate);
+    const grand = subtotal + tax;
+    document.getElementById('subtotal').textContent   = `¥${subtotal.toLocaleString()}`;
+    document.getElementById('tax-amount').textContent = `¥${tax.toLocaleString()}`;
+    document.getElementById('grand-total').textContent = `¥${grand.toLocaleString()}`;
+  }
+
+  function escapeHtml(str) {
+    return String(str)
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+      .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+  }
+
+  document.getElementById('add-item-btn').addEventListener('click', addItem);
+  document.getElementById('tax-rate').addEventListener('change', calcTotals);
+
+  // 初期明細を1行追加
+  addItem();
+
+  // ===== フォームデータ取得 =====
+  function getFormData() {
+    return {
+      invNum:           INV_NUM,
+      submitterName:    document.getElementById('submitter-name').value,
+      submitterEmail:   document.getElementById('submitter-email').value,
+      submitterAddress: document.getElementById('submitter-address').value,
+      submitterTel:     document.getElementById('submitter-tel').value,
+      recipient:        document.getElementById('recipient').value,
+      invoiceDate:      document.getElementById('invoice-date').value,
+      dueDate:          document.getElementById('due-date').value,
+      notes:            document.getElementById('notes').value,
+      taxRate:          document.getElementById('tax-rate').value,
+      items:            items.map(i => ({ ...i }))
+    };
+  }
+
+  // ===== プレビュー描画 =====
+  function fillPreview(data) {
+    document.getElementById('p-inv-num').textContent = `請求書番号：${data.invNum}`;
+    document.getElementById('p-from').textContent = data.submitterName || '（未入力）';
+    const detail = [data.submitterAddress, data.submitterTel, data.submitterEmail].filter(Boolean).join('　');
+    document.getElementById('p-from-detail').textContent = detail;
+    document.getElementById('p-to').textContent = data.recipient || '（未入力）';
+    document.getElementById('p-date').textContent = data.invoiceDate || '—';
+    document.getElementById('p-due').textContent  = data.dueDate    || '—';
+
+    const tbody = document.getElementById('p-items');
+    tbody.innerHTML = data.items.map(i => `
+      <tr>
+        <td>${escapeHtml(i.name || i.category || '—')}</td>
+        <td style="text-align:right">${i.qty}</td>
+        <td style="text-align:right">¥${Math.round(i.price).toLocaleString()}</td>
+        <td>¥${Math.round(i.qty * i.price).toLocaleString()}</td>
+      </tr>
+    `).join('');
+
+    const subtotal = data.items.reduce((s, i) => s + Math.round(i.qty * i.price), 0);
+    const rate     = parseInt(data.taxRate) / 100;
+    const tax      = Math.round(subtotal * rate);
+    document.getElementById('p-subtotal').textContent = `¥${subtotal.toLocaleString()}`;
+    document.getElementById('p-tax').textContent      = `¥${tax.toLocaleString()}`;
+    document.getElementById('p-grand').textContent    = `¥${(subtotal + tax).toLocaleString()}`;
+
+    const notesEl = document.getElementById('p-notes');
+    if (data.notes) {
+      notesEl.style.display = 'block';
+      notesEl.innerHTML = `<strong style="font-size:12px;color:#888780;text-transform:uppercase;letter-spacing:0.06em;">備考</strong><br>${escapeHtml(data.notes).replace(/\n/g,'<br>')}`;
+    } else {
+      notesEl.style.display = 'none';
+    }
+  }
+
+  // ===== ボタン処理 =====
+  document.getElementById('preview-btn').addEventListener('click', () => {
+    fillPreview(getFormData());
+    document.getElementById('preview-modal').classList.add('open');
+  });
+
+  document.getElementById('submit-btn').addEventListener('click', () => {
+    const data = getFormData();
+    if (!data.submitterName) {
+      alert('氏名 / 会社名を入力してください。');
+      document.getElementById('submitter-name').focus();
+      return;
+    }
+    fillPreview(data);
+    document.getElementById('preview-modal').classList.add('open');
+    const msg = document.getElementById('success-msg');
+    msg.style.display = 'block';
+    msg.textContent = `✓ 請求書 ${data.invNum} を作成しました。プレビューから「印刷 / PDF保存」を押して控えを保存してください。`;
+  });
+
+  document.getElementById('close-preview').addEventListener('click',  () => document.getElementById('preview-modal').classList.remove('open'));
+  document.getElementById('close-preview2').addEventListener('click', () => document.getElementById('preview-modal').classList.remove('open'));
+
+  document.getElementById('print-btn').addEventListener('click', () => window.print());
+
+  // オーバーレイ外クリックで閉じる
+  document.getElementById('preview-modal').addEventListener('click', function(e) {
+    if (e.target === this) this.classList.remove('open');
+  });
+</script>
+
+</body>
+</html>
