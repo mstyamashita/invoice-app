@@ -63,37 +63,65 @@
     .success-msg { background:#FFE4EC; color:#b05070; border:1px solid #F2C4CE; border-radius:8px; padding:12px 16px; font-size:14px; display:none; margin-top:14px; }
 
     /* プレビュー */
-    .overlay { display:none; position:fixed; inset:0; background:rgba(180,80,100,.3); z-index:200; align-items:center; justify-content:center; padding:20px; }
+    .overlay { display:none; position:fixed; inset:0; background:rgba(180,80,100,.3); z-index:200; align-items:center; justify-content:center; padding:16px; }
     .overlay.open { display:flex; }
-    .preview-box { background:#fff; border-radius:16px; padding:2rem 2.5rem; width:100%; max-width:700px; max-height:90vh; overflow-y:auto; border:1px solid #F2C4CE; }
-    .preview-top { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:1.5rem; }
-    .preview-top h2 { font-size:26px; font-weight:700; color:#b05070; }
-    .preview-inv-num { font-size:13px; color:#c47a8a; margin-top:4px; }
+    .preview-box { background:#fff; border-radius:12px; padding:2.5rem 3rem 2rem; width:100%; max-width:720px; max-height:95vh; overflow-y:auto; border:1px solid #F2C4CE; }
+
+    /* 請求書タイトルエリア */
+    .preview-top { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:1.2rem; padding-bottom:1rem; border-bottom:3px solid #b05070; }
+    .preview-title-block { flex:1; }
+    .preview-top h2 { font-size:32px; font-weight:700; color:#b05070; letter-spacing:.1em; }
+    .preview-inv-num { font-size:12px; color:#c47a8a; margin-top:4px; }
     .close-btn { background:none; border:none; font-size:22px; cursor:pointer; color:#c47a8a; line-height:1; padding:4px; }
     .close-btn:hover { color:#b05070; }
-    .preview-meta { display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; margin-bottom:1.5rem; padding-bottom:1.5rem; border-bottom:1px solid #F2C4CE; }
-    .meta-label { font-size:11px; font-weight:600; color:#c47a8a; text-transform:uppercase; letter-spacing:.08em; margin-bottom:5px; }
-    .meta-value { font-size:15px; font-weight:600; color:#3a2a2e; }
-    .meta-sub { font-size:13px; color:#8a5a65; margin-top:2px; }
-    .preview-table { width:100%; border-collapse:collapse; font-size:13px; margin-bottom:1rem; }
-    .preview-table th { font-size:11px; font-weight:600; color:#c47a8a; text-transform:uppercase; letter-spacing:.06em; padding:8px 10px; border-bottom:2px solid #F2C4CE; text-align:left; }
+
+    /* 提出者・請求先 */
+    .preview-meta { display:grid; grid-template-columns:1fr 1fr; gap:1.2rem; margin-bottom:1.2rem; padding-bottom:1rem; border-bottom:1px solid #F2C4CE; }
+    .meta-label { font-size:10px; font-weight:700; color:#c47a8a; text-transform:uppercase; letter-spacing:.1em; margin-bottom:3px; }
+    .meta-value { font-size:15px; font-weight:700; color:#3a2a2e; }
+    .meta-sub { font-size:12px; color:#8a5a65; margin-top:3px; line-height:1.7; }
+
+    /* 明細テーブル */
+    .preview-table { width:100%; border-collapse:collapse; font-size:13px; margin-bottom:.8rem; }
+    .preview-table thead tr { background:#FFF0F4; }
+    .preview-table th { font-size:11px; font-weight:700; color:#b05070; letter-spacing:.06em; padding:8px 10px; border-top:1px solid #F2C4CE; border-bottom:1px solid #F2C4CE; text-align:left; }
     .preview-table th:last-child { text-align:right; }
-    .preview-table td { padding:9px 10px; border-bottom:1px solid #fce8ed; color:#3a2a2e; }
+    .preview-table td { padding:8px 10px; border-bottom:1px solid #fce8ed; color:#3a2a2e; font-size:13px; }
     .preview-table td:last-child { text-align:right; font-weight:600; }
-    .preview-totals { max-width:280px; margin-left:auto; font-size:14px; }
-    .pt-row { display:flex; justify-content:space-between; padding:5px 0; color:#8a5a65; }
-    .pt-row.grand { font-size:18px; font-weight:700; color:#b05070; border-top:2px solid #F2C4CE; padding-top:10px; margin-top:6px; }
-    .preview-notes { margin-top:1.5rem; padding-top:1rem; border-top:1px solid #F2C4CE; font-size:13px; color:#8a5a65; }
-    .preview-actions { display:flex; gap:12px; justify-content:flex-end; margin-top:1.75rem; }
+    .preview-table tbody tr:last-child td { border-bottom:2px solid #F2C4CE; }
+
+    /* 合計 */
+    .preview-totals { max-width:260px; margin-left:auto; font-size:13px; margin-bottom:1rem; }
+    .pt-row { display:flex; justify-content:space-between; padding:4px 0; color:#8a5a65; }
+    .pt-row.grand { font-size:16px; font-weight:700; color:#fff; background:#b05070; padding:10px 14px; border-radius:6px; margin-top:8px; }
+
+    /* 振込先・備考 */
+    .preview-notes { margin-top:1rem; padding-top:1rem; border-top:1px solid #F2C4CE; font-size:12px; color:#5a3a42; line-height:1.8; }
+    .preview-notes strong { font-size:10px; font-weight:700; color:#b05070; text-transform:uppercase; letter-spacing:.1em; display:block; margin-bottom:3px; margin-top:.8rem; }
+    .preview-notes strong:first-child { margin-top:0; }
+    .preview-actions { display:flex; gap:12px; justify-content:flex-end; margin-top:1.5rem; padding-top:1rem; border-top:1px solid #F2C4CE; }
 
     /* インボイス登録番号バッジ（プレビュー内） */
-    .inv-reg-badge { display:inline-block; background:#FFE4EC; color:#b05070; font-size:12px; font-weight:600; padding:3px 10px; border-radius:6px; border:1px solid #F2C4CE; margin-top:4px; }
+    .inv-reg-badge { display:inline-block; background:#FFE4EC; color:#b05070; font-size:11px; font-weight:600; padding:2px 8px; border-radius:4px; border:1px solid #F2C4CE; margin-top:4px; }
 
     @media (max-width:600px) {
       .grid2, .grid3 { grid-template-columns:1fr; }
       .preview-meta { grid-template-columns:1fr; }
       .actions { flex-direction:column; }
       .btn-primary, .btn-secondary { width:100%; text-align:center; }
+    }
+
+    @media print {
+      @page { margin: 15mm; size: A4; }
+      /* ヘッダー・フッター（日時・URL）を非表示 */
+      html { -webkit-print-color-adjust: exact; }
+      head::before, head::after { display:none; }
+      /* フォーム画面を非表示にしてプレビューのみ印刷 */
+      body > .app { display:none !important; }
+      .overlay { display:block !important; position:static !important; background:none !important; padding:0 !important; }
+      .preview-box { box-shadow:none !important; border:none !important; max-height:none !important; padding:0 !important; border-radius:0 !important; }
+      .preview-actions { display:none !important; }
+      .close-btn { display:none !important; }
     }
   </style>
 </head>
@@ -241,28 +269,28 @@
 <div class="overlay" id="preview-modal">
   <div class="preview-box">
     <div class="preview-top">
-      <div>
-        <h2>請求書</h2>
+      <div class="preview-title-block">
+        <h2>請 求 書</h2>
         <div class="preview-inv-num" id="p-inv-num"></div>
       </div>
       <button class="close-btn" id="close-preview">✕</button>
     </div>
     <div class="preview-meta">
       <div>
-        <div class="meta-label">提出者</div>
-        <div class="meta-value" id="p-from">—</div>
-        <div class="meta-sub" id="p-from-detail"></div>
-        <div id="p-inv-reg-wrap" style="display:none; margin-top:6px;">
-          <span class="inv-reg-badge" id="p-inv-reg"></span>
-        </div>
-      </div>
-      <div>
-        <div class="meta-label">請求先</div>
+        <div class="meta-label">ご請求先</div>
         <div class="meta-value" id="p-to">—</div>
-        <div class="meta-sub">
+        <div class="meta-sub" style="margin-top:8px;">
           件名：<span id="p-subject"></span><br>
           請求日：<span id="p-date"></span><br>
           支払期限：<span id="p-due"></span>
+        </div>
+      </div>
+      <div style="text-align:right;">
+        <div class="meta-label" style="text-align:right;">請求者</div>
+        <div class="meta-value" id="p-from">—</div>
+        <div class="meta-sub" id="p-from-detail" style="text-align:right;"></div>
+        <div id="p-inv-reg-wrap" style="display:none; margin-top:6px; text-align:right;">
+          <span class="inv-reg-badge" id="p-inv-reg"></span>
         </div>
       </div>
     </div>
@@ -570,7 +598,18 @@ document.getElementById('submit-btn').addEventListener('click', () => {
 
 document.getElementById('close-preview').addEventListener('click',  () => document.getElementById('preview-modal').classList.remove('open'));
 document.getElementById('close-preview2').addEventListener('click', () => document.getElementById('preview-modal').classList.remove('open'));
-document.getElementById('print-btn').addEventListener('click', () => window.print());
+document.getElementById('print-btn').addEventListener('click', () => {
+  // Chrome系：ヘッダー・フッターなしで印刷
+  const style = document.createElement('style');
+  style.id = 'print-override';
+  style.textContent = `@page { margin: 15mm; }`;
+  document.head.appendChild(style);
+  window.print();
+  setTimeout(() => {
+    const el = document.getElementById('print-override');
+    if (el) el.remove();
+  }, 1000);
+});
 document.getElementById('preview-modal').addEventListener('click', function(e){ if(e.target===this) this.classList.remove('open'); });
 </script>
 </body>
