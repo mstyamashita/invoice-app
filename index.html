@@ -112,16 +112,38 @@
     }
 
     @media print {
-      @page { margin: 15mm; size: A4; }
-      /* ヘッダー・フッター（日時・URL）を非表示 */
-      html { -webkit-print-color-adjust: exact; }
-      head::before, head::after { display:none; }
-      /* フォーム画面を非表示にしてプレビューのみ印刷 */
+      @page {
+        margin: 15mm 20mm;
+        size: A4;
+        /* ブラウザのヘッダー・フッターを非表示 */
+        margin-top: 10mm;
+        margin-bottom: 10mm;
+      }
+      html, body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      /* フォーム画面を非表示 */
       body > .app { display:none !important; }
       .overlay { display:block !important; position:static !important; background:none !important; padding:0 !important; }
       .preview-box { box-shadow:none !important; border:none !important; max-height:none !important; padding:0 !important; border-radius:0 !important; }
       .preview-actions { display:none !important; }
       .close-btn { display:none !important; }
+
+      /* 印刷時は黒・白に統一 */
+      .preview-top { border-bottom:2px solid #000 !important; }
+      .preview-top h2 { color:#000 !important; }
+      .preview-inv-num { color:#555 !important; }
+      .meta-label { color:#555 !important; }
+      .meta-value { color:#000 !important; }
+      .meta-sub { color:#333 !important; }
+      .preview-table thead tr { background:#f0f0f0 !important; }
+      .preview-table th { color:#000 !important; border-top:1px solid #000 !important; border-bottom:1px solid #000 !important; }
+      .preview-table td { color:#000 !important; border-bottom:1px solid #ddd !important; }
+      .preview-table tbody tr:last-child td { border-bottom:2px solid #000 !important; }
+      .pt-row { color:#333 !important; }
+      .pt-row.grand { background:#222 !important; color:#fff !important; }
+      .preview-notes { border-top:1px solid #ccc !important; color:#333 !important; }
+      .preview-notes strong { color:#000 !important; }
+      .inv-reg-badge { background:#eee !important; color:#000 !important; border:1px solid #999 !important; }
+      .preview-meta { border-bottom:1px solid #ccc !important; }
     }
   </style>
 </head>
@@ -599,10 +621,15 @@ document.getElementById('submit-btn').addEventListener('click', () => {
 document.getElementById('close-preview').addEventListener('click',  () => document.getElementById('preview-modal').classList.remove('open'));
 document.getElementById('close-preview2').addEventListener('click', () => document.getElementById('preview-modal').classList.remove('open'));
 document.getElementById('print-btn').addEventListener('click', () => {
-  // Chrome系：ヘッダー・フッターなしで印刷
   const style = document.createElement('style');
   style.id = 'print-override';
-  style.textContent = `@page { margin: 15mm; }`;
+  style.textContent = `
+    @page {
+      margin: 10mm 15mm !important;
+      /* Chrome/Edgeはこれでヘッダー・フッターが消える */
+    }
+    @page :first { margin-top: 10mm !important; }
+  `;
   document.head.appendChild(style);
   window.print();
   setTimeout(() => {
